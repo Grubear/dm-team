@@ -9,6 +9,7 @@
     html, body {
       height: 100%;
       margin: 0;
+      padding: 0;
     }
 
     body {
@@ -18,12 +19,17 @@
       font-family: 'Poppins', sans-serif;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 20px;
+      min-height: 100vh;
+      overflow-y: hidden;
+      padding: 0;
     }
 
     main {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding-top: 0;
     }
 
     table {
@@ -51,7 +57,6 @@
     td {
       background-color: #f0f0f0;
       border-bottom: 1px solid #ccc;
-      text-align: left;
     }
 
     tbody tr {
@@ -60,7 +65,6 @@
       animation: fadeInRow 0.8s ease forwards;
     }
 
-    /* Alternáló animáció */
     tbody tr:nth-child(odd) {
       animation-name: slideFromLeft;
     }
@@ -69,7 +73,6 @@
       animation-name: slideFromRight;
     }
 
-    /* Késleltetés, hogy fokozatos legyen az érkezés */
     tbody tr:nth-child(1) { animation-delay: 0.2s; }
     tbody tr:nth-child(2) { animation-delay: 0.4s; }
     tbody tr:nth-child(3) { animation-delay: 0.6s; }
@@ -188,10 +191,10 @@
     }
 
     .header-img {
-      width: 672px;
-      height: 198px;
+      width: 504px;
+      height: 148px;
       display: block;
-      margin: 0 auto 20px auto;
+      margin: 20px auto 10px auto;
       border-radius: 0;
       object-fit: contain;
     }
