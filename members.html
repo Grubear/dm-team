@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Death Monsters Members</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: url('bg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 10px;
+    }
+
+    .header-img {
+      width: 100%;
+      max-width: 504px;
+      height: auto;
+      display: block;
+      margin: 20px auto 10px auto;
+      object-fit: contain;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 10px 0;
+      color: #007acc;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 10px 0;
+      color: #f0f0f0;
+    }
+
+    table {
+      width: 90%;
+      max-width: 1000px;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: #f0f0f0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 12px 16px;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #007acc;
+      color: white;
+    }
+
+    td {
+      background-color: #f0f0f0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    tbody tr {
+      opacity: 0;
+      transform: translateX(0);
+      animation: fadeInRow 0.8s ease forwards;
+    }
+
+    tbody tr:nth-child(odd) {
+      animation-name: slideFromLeft;
+    }
+
+    tbody tr:nth-child(even) {
+      animation-name: slideFromRight;
+    }
+
+    tbody tr:nth-child(1) { animation-delay: 0.2s; }
+    tbody tr:nth-child(2) { animation-delay: 0.4s; }
+    tbody tr:nth-child(3) { animation-delay: 0.6s; }
+    tbody tr:nth-child(4) { animation-delay: 0.8s; }
+    tbody tr:nth-child(5) { animation-delay: 1s; }
+    tbody tr:nth-child(6) { animation-delay: 1.2s; }
+
+    @keyframes slideFromLeft {
+      from { opacity: 0; transform: translateX(-100px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slideFromRight {
+      from { opacity: 0; transform: translateX(100px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    tbody tr:hover td {
+      background-color: #dddddd !important;
+      color: #000000;
+      transition: background 0.3s ease;
+    }
+
+    .inactive {
+      color: red;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 14px;
+      color: #f0f0f0;
+    }
+
+    .player-name {
+      color: #000000;
+    }
+
+    img {
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      object-fit: cover;
+      vertical-align: middle;
+    }
+
+    td:nth-child(4) {
+      text-align: center;
+    }
+
+    @media screen and (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      tr {
+        background-color: #f8f8f8;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      td {
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+        border: none;
+        font-size: 16px;
+      }
+
+      td::before {
+        position: absolute;
+        left: 16px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        color: #555;
+        text-align: left;
+      }
+
+      td:nth-of-type(1)::before { content: "Name"; }
+      td:nth-of-type(2)::before { content: "Role"; }
+      td:nth-of-type(3)::before { content: "Status"; }
+      td:nth-of-type(4)::before { content: "Country"; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <img alt="Header" class="header-img" src="indexmembers.png"/>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th style="text-align: center;">Country</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span style="color:#7fff00;">~DM~</span> <span class="player-name">KuTya 🛡️</span></td>
+          <td>Founder, Supporter</td>
+          <td>✅ Active</td>
+          <td><img alt="HU" src="https://flagcdn.com/h20/hu.png"/></td>
+        </tr>
+        <tr>
+          <td><span style="color:#7fff00;">~DM~</span> <span class="player-name">Method 🛡️</span></td>
+          <td>Founder</td>
+          <td class="inactive">❌ Inactive</td>
+          <td><img alt="HU" src="https://flagcdn.com/h20/hu.png"/></td>
+        </tr>
+        <tr>
+          <td><span style="color:#007acc;">~DM~</span> <span class="player-name">InsaNe!</span></td>
+          <td>Member</td>
+          <td>✅ Active</td>
+          <td><img alt="HU" src="https://flagcdn.com/h20/hu.png"/></td>
+        </tr>
+        <tr>
+          <td><span style="color:#007acc;">~DM~</span> <span class="player-name">Dealy</span></td>
+          <td>Member</td>
+          <td>✅ Active</td>
+          <td><img alt="HU" src="https://flagcdn.com/h20/hu.png"/></td>
+        </tr>
+        <tr>
+          <td><span style="color:#007acc;">~DM~</span> <span class="player-name">AxErOx</span></td>
+          <td>Member</td>
+          <td>✅ Active</td>
+          <td><img alt="RO" src="https://flagcdn.com/h20/ro.png"/></td>
+        </tr>
+        <tr>
+          <td><span style="color:#dc134c;">~DM~</span> <span class="player-name">AndRo 🔰</span></td>
+          <td>Trial</td>
+          <td>✅ Active</td>
+          <td><img alt="HU" src="https://flagcdn.com/h20/hu.png"/></td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+  <div class="footer">
+    <p><strong>TOTAL MEMBERS:</strong> 6</p>
+    <p>Death Monsters © 2011 - 2025</p>
+  </div>
+</body>
+</html>
