@@ -279,7 +279,6 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       animateRows();
-
       const clanwarCount = document.querySelectorAll("#matchBody tr").length;
       document.getElementById("clanwarCount").textContent = clanwarCount;
     });
@@ -317,7 +316,6 @@
 
       openedRow = target;
       originalIndex = Array.from(tbody.children).indexOf(target);
-      tbody.insertBefore(target, tbody.firstChild);
 
       detailRow = document.createElement('tr');
       detailRow.classList.add('details-row');
@@ -351,30 +349,17 @@
       `;
 
       detailRow.appendChild(detailCell);
-      tbody.insertBefore(detailRow, tbody.children[1]);
+      tbody.insertBefore(detailRow, target.nextSibling);
     });
 
     function closeDetails() {
       if (openedRow) {
         if (detailRow) {
-          detailRow.remove();
+          detailRow.remove();  // Nincs animáció a bezárásnál
           detailRow = null;
         }
-
-        if (originalIndex !== null) {
-          const rows = Array.from(tbody.children);
-          if (originalIndex >= rows.length) {
-            tbody.appendChild(openedRow);
-          } else {
-            tbody.insertBefore(openedRow, rows[originalIndex]);
-          }
-        }
-
         openedRow = null;
         originalIndex = null;
-
-        // 🔁 Újraindítjuk az animációt
-        animateRows();
       }
     }
   </script>
