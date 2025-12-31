@@ -234,10 +234,9 @@
         clearInterval(interval);
         const hits = drawn.filter(n => selected.includes(n)).length;
         let countdown = 10;
-
         resultDiv.innerHTML += `
           <p><strong>Találatok száma: ${hits} / 5</strong></p>
-          <p class="countdown">Új játék indul: <span id="count">${countdown}</span></p>
+          <p class="countdown">Új játék indul: <span id="count">${countdown}</span> másodperc múlva</p>
         `;
 
         const countSpan = document.getElementById("count");
@@ -254,4 +253,5 @@
 
 </body>
 </html>
+
 
