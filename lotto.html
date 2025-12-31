@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <title>5-ös Lottó Szimulátor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: white;
+      color: #1b5e20;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      border: 2px solid #c8e6c9;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .num {
+      padding: 10px 0;
+      border-radius: 8px;
+      border: 2px solid #81c784;
+      text-align: center;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    .num:hover {
+      background: #e8f5e9;
+    }
+
+    .num.selected {
+      background: #2e7d32;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    button {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #a5d6a7;
+      cursor: not-allowed;
+    }
+
+    .result {
+      margin-top: 20px;
+    }
+
+    .balls {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .ball {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      background: #c8e6c9;
+      animation: pop 0.3s ease;
+    }
+
+    .ball.hit {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .countdown {
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎲 5-ös Lottó Szimulátor</h1>
+
+<div class="container">
+  <p>Válassz ki <strong>5 számot</strong> 1–90 között:</p>
+  <div class="grid" id="grid"></div>
+
+  <p>Kiválasztva: <strong id="selectedText">–</strong></p>
+
+  <button id="drawBtn" disabled>Sorsolás indítása</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+  const grid = document.getElementById("grid");
+  const selectedText = document.getElementById("selectedText");
+  const drawBtn = document.getElementById("drawBtn");
+  const resultDiv = document.getElementById("result");
+
+  let selected = [];
+  let drawing = false;
+  let countdownInterval;
+
+  function resetGame() {
+    clearInterval(countdownInterval);
+    selected = [];
+    selectedText.innerText = "–";
+    resultDiv.innerHTML = "";
+    drawBtn.disabled = true;
+    drawing = false;
+
+    document.querySelectorAll(".num").forEach(num => {
+      num.classList.remove("selected");
+    });
+  }
+
+  for (let i = 1; i <= 90; i++) {
+    const div = document.createElement("div");
+    div.className = "num";
+    div.innerText = i;
+
+    div.onclick = () => {
+      if (drawing) return;
+
+      if (selected.includes(i)) {
+        selected = selected.filter(n => n !== i);
+        div.classList.remove("selected");
+      } else if (selected.length < 5) {
+        selected.push(i);
+        div.classList.add("selected");
+      }
+
+      selectedText.innerText = selected.join(", ") || "–";
+      drawBtn.disabled = selected.length !== 5;
+    };
+
+    grid.appendChild(div);
+  }
+
+  drawBtn.onclick = () => {
+    drawing = true;
+    drawBtn.disabled = true;
+    resultDiv.innerHTML = "<h3>Sorsolás...</h3>";
+
+    let pool = Array.from({ length: 90 }, (_, i) => i + 1);
+    let drawn = [];
+
+    const ballsDiv = document.createElement("div");
+    ballsDiv.className = "balls";
+    resultDiv.appendChild(ballsDiv);
+
+    const interval = setInterval(() => {
+      const index = Math.floor(Math.random() * pool.length);
+      const num = pool.splice(index, 1)[0];
+      drawn.push(num);
+
+      const ball = document.createElement("div");
+      ball.className = "ball";
+      if (selected.includes(num)) ball.classList.add("hit");
+      ball.innerText = num;
+      ballsDiv.appendChild(ball);
+
+      if (drawn.length === 5) {
+        clearInterval(interval);
+        const hits = drawn.filter(n => selected.includes(n)).length;
+
+        let countdown = 10;
+
+        resultDiv.innerHTML += `
+          <p><strong>Találatok száma: ${hits} / 5</strong></p>
+          <p class="countdown">Új játék indul: <b><span id="count">${countdown}</span></b> másodperc múlva</p>
+        `;
+
+        const countSpan = document.getElementById("count");
+
+        countdownInterval = setInterval(() => {
+          countdown--;
+          countSpan.innerText = countdown;
+
+          if (countdown === 0) {
+            clearInterval(countdownInterval);
+            resetGame();
+          }
+        }, 1000);
+      }
+    }, 600);
+  };
+</script>
+
+</body>
+</html>
