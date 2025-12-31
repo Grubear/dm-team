@@ -2,92 +2,97 @@
 <html lang="hu">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>5-ös Lottó Szimulátor</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="data:application/json,{
+    &quot;name&quot;:&quot;5-ös Lottó&quot;,
+    &quot;short_name&quot;:&quot;Lottó&quot;,
+    &quot;start_url&quot;:&quot;.&quot;,
+    &quot;display&quot;:&quot;standalone&quot;,
+    &quot;background_color&quot;:&quot;#ffffff&quot;,
+    &quot;theme_color&quot;:&quot;#2e7d32&quot;
+  }">
+
   <style>
     body {
       font-family: Arial, sans-serif;
       background: white;
       color: #1b5e20;
       margin: 0;
-      padding: 20px;
+      padding: 12px;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
     }
 
     .container {
       max-width: 900px;
       margin: auto;
       border: 2px solid #c8e6c9;
-      border-radius: 12px;
-      padding: 20px;
+      border-radius: 14px;
+      padding: 14px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
-      gap: 8px;
-      margin-bottom: 20px;
+      gap: 6px;
+      margin-bottom: 12px;
     }
 
     .num {
-      padding: 10px 0;
-      border-radius: 8px;
+      padding: 14px 0;
+      border-radius: 10px;
       border: 2px solid #81c784;
       text-align: center;
-      cursor: pointer;
       font-weight: bold;
-      transition: all 0.2s ease;
-      background: white;
-    }
-
-    .num:hover {
-      background: #e8f5e9;
+      cursor: pointer;
+      user-select: none;
     }
 
     .num.selected {
       background: #2e7d32;
       color: white;
-      transform: scale(1.05);
     }
 
     button {
+      width: 100%;
+      padding: 14px;
       background: #2e7d32;
       color: white;
       border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
+      border-radius: 10px;
+      font-size: 1rem;
+      margin-top: 8px;
     }
 
     button:disabled {
       background: #a5d6a7;
-      cursor: not-allowed;
-    }
-
-    .result {
-      margin-top: 20px;
     }
 
     .balls {
       display: flex;
+      justify-content: center;
       gap: 10px;
-      margin-top: 10px;
+      margin: 10px 0;
+      flex-wrap: wrap;
     }
 
     .ball {
-      width: 45px;
-      height: 45px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
+      background: #c8e6c9;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      background: #c8e6c9;
       animation: pop 0.3s ease;
     }
 
@@ -96,30 +101,39 @@
       color: white;
     }
 
-    .countdown {
-      font-weight: bold;
-      margin-top: 8px;
+    .stats {
+      margin-top: 12px;
+      border-top: 1px solid #c8e6c9;
+      padding-top: 10px;
+      font-size: 0.9rem;
     }
 
     @keyframes pop {
       from { transform: scale(0); }
       to { transform: scale(1); }
     }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
   </style>
 </head>
+
 <body>
 
 <h1>🎲 5-ös Lottó Szimulátor</h1>
 
 <div class="container">
-  <p>Válassz ki <strong>5 számot</strong> 1–90 között:</p>
+  <p>Válassz ki 5 számot:</p>
   <div class="grid" id="grid"></div>
 
   <p>Kiválasztva: <strong id="selectedText">–</strong></p>
+  <button id="drawBtn" disabled>Sorsolás</button>
 
-  <button id="drawBtn" disabled>Sorsolás indítása</button>
-
-  <div class="result" id="result"></div>
+  <div id="result"></div>
+  <div class="stats" id="stats"></div>
 </div>
 
 <script>
@@ -127,10 +141,31 @@
   const selectedText = document.getElementById("selectedText");
   const drawBtn = document.getElementById("drawBtn");
   const resultDiv = document.getElementById("result");
+  const statsDiv = document.getElementById("stats");
 
   let selected = [];
   let drawing = false;
   let countdownInterval;
+
+  let stats = JSON.parse(localStorage.getItem("lottoStats")) || {
+    games: 0,
+    hits: [0,0,0,0,0,0]
+  };
+
+  function renderStats() {
+    statsDiv.innerHTML = `
+      <strong>📊 Statisztika</strong><br>
+      Játékok: ${stats.games}<br>
+      0 találat: ${stats.hits[0]}<br>
+      1 találat: ${stats.hits[1]}<br>
+      2 találat: ${stats.hits[2]}<br>
+      3 találat: ${stats.hits[3]}<br>
+      4 találat: ${stats.hits[4]}<br>
+      5 találat: ${stats.hits[5]}
+    `;
+  }
+
+  renderStats();
 
   function resetGame() {
     clearInterval(countdownInterval);
@@ -139,82 +174,72 @@
     resultDiv.innerHTML = "";
     drawBtn.disabled = true;
     drawing = false;
-
-    document.querySelectorAll(".num").forEach(num => {
-      num.classList.remove("selected");
-    });
+    document.querySelectorAll(".num").forEach(n => n.classList.remove("selected"));
   }
 
   for (let i = 1; i <= 90; i++) {
-    const div = document.createElement("div");
-    div.className = "num";
-    div.innerText = i;
+    const d = document.createElement("div");
+    d.className = "num";
+    d.innerText = i;
 
-    div.onclick = () => {
+    d.onclick = () => {
       if (drawing) return;
-
       if (selected.includes(i)) {
         selected = selected.filter(n => n !== i);
-        div.classList.remove("selected");
+        d.classList.remove("selected");
       } else if (selected.length < 5) {
         selected.push(i);
-        div.classList.add("selected");
+        d.classList.add("selected");
       }
-
       selectedText.innerText = selected.join(", ") || "–";
       drawBtn.disabled = selected.length !== 5;
     };
-
-    grid.appendChild(div);
+    grid.appendChild(d);
   }
 
   drawBtn.onclick = () => {
     drawing = true;
     drawBtn.disabled = true;
-    resultDiv.innerHTML = "<h3>Sorsolás...</h3>";
+    resultDiv.innerHTML = "<p>Sorsolás...</p>";
 
-    let pool = Array.from({ length: 90 }, (_, i) => i + 1);
+    let pool = Array.from({length:90},(_,i)=>i+1);
     let drawn = [];
-
-    const ballsDiv = document.createElement("div");
-    ballsDiv.className = "balls";
-    resultDiv.appendChild(ballsDiv);
+    const balls = document.createElement("div");
+    balls.className = "balls";
+    resultDiv.appendChild(balls);
 
     const interval = setInterval(() => {
-      const index = Math.floor(Math.random() * pool.length);
-      const num = pool.splice(index, 1)[0];
-      drawn.push(num);
-
-      const ball = document.createElement("div");
-      ball.className = "ball";
-      if (selected.includes(num)) ball.classList.add("hit");
-      ball.innerText = num;
-      ballsDiv.appendChild(ball);
+      const n = pool.splice(Math.floor(Math.random()*pool.length),1)[0];
+      drawn.push(n);
+      const b = document.createElement("div");
+      b.className = "ball";
+      if (selected.includes(n)) {
+        b.classList.add("hit");
+        navigator.vibrate && navigator.vibrate(200);
+      }
+      b.innerText = n;
+      balls.appendChild(b);
 
       if (drawn.length === 5) {
         clearInterval(interval);
         const hits = drawn.filter(n => selected.includes(n)).length;
 
-        let countdown = 10;
+        stats.games++;
+        stats.hits[hits]++;
+        localStorage.setItem("lottoStats", JSON.stringify(stats));
+        renderStats();
 
-        resultDiv.innerHTML += `
-          <p><strong>Találatok száma: ${hits} / 5</strong></p>
-          <p class="countdown">Új játék indul: <b><span id="count">${countdown}</span></b> másodperc múlva</p>
-        `;
+        let c = 10;
+        resultDiv.innerHTML += `<p><strong>Találatok: ${hits}/5</strong></p>
+        <p>Új játék: <span id="c">${c}</span></p>`;
 
-        const countSpan = document.getElementById("count");
-
-        countdownInterval = setInterval(() => {
-          countdown--;
-          countSpan.innerText = countdown;
-
-          if (countdown === 0) {
-            clearInterval(countdownInterval);
-            resetGame();
-          }
-        }, 1000);
+        countdownInterval = setInterval(()=>{
+          c--;
+          document.getElementById("c").innerText = c;
+          if (c === 0) resetGame();
+        },1000);
       }
-    }, 600);
+    },600);
   };
 </script>
 
